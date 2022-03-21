@@ -91,15 +91,25 @@ function applyItem(item) {
     applyItemData(item, "toll", "free");
 }
 
+function stopBlinking() {
+    var el = document.getElementById("free");
+    el.classList.remove("blink_me");
+    var el = document.getElementById("toll");
+    el.classList.remove("blink_me");
+}
+
 function nextItemAfterDelay(next_idx) {
     applyItem(data[next_idx]);
     cur_pos_num += 1;
     if (cur_pos_num > CASES_PER_PERSON) {
         personCompleteAllCases();
         newPerson();
+    } else {
+        gameEnabled = true;
     }
     showStat(true);
-    gameEnabled = true;
+    updateStat();
+    stopBlinking();
 }
 
 function fadeIn(el, opacity) {
@@ -156,9 +166,10 @@ function nextItem() {
     leaveCounter = 0;
 }
 
-function updateStat(gp) {
+function updateStat(percent) {
     var stat = document.getElementById("stat");
-    stat.innerHTML = Math.round(gp.axes[0]*100) + " %" + "<br/> " + personId; 
+    stat.innerHTML = Math.round(percent*100) + " %" + "<br/> " + personId; 
+    
     var greet_stat = document.getElementById("greet-stat");
     if (cur_pos_num > 0) {
         greet_stat.innerHTML = cur_pos_num + " of " + CASES_PER_PERSON;
@@ -194,7 +205,7 @@ function newPerson() {
     personId = x.toISOString().replace(/[-TZ:\.]/g,"") + "-"+personCounter;
     
     console.log(personId)
-
+    // next case
     nextItem();
 }
 
@@ -211,6 +222,9 @@ function checkPersonLeave() {
 }
 
 function makeChoice(el) {
+    if (!gameEnabled) {
+        return;
+    }
     el.classList.add("blink_me");
 
     // prepare data
@@ -229,7 +243,6 @@ function makeChoice(el) {
 
     // show next case
     nextItem();
-
 }
 
 
@@ -241,24 +254,32 @@ function gameLoop() {
     }
 
     // print out statistics
-    updateStat(gp);
+    if (!gp) {
+        console.log("gameloop stoppped");
+        return;
+    }
+
+    if (Math.abs(gp.axes[1]) == 1 && gameEnabled) {
+        // leafs under wheel
+        newPerson();
+    }
     
     var currentValue = gp.axes[0];
     var element1 = document.getElementById("toll");
     var element2 = document.getElementById("free");
 
+    updateStat(currentValue);
+
     //console.log(currentValue);
     if (Math.abs(currentValue) < 0.05 ) {
         currentValue = 0;
         initialPosition = true;
-        element1.classList.remove("blink_me");
-        element2.classList.remove("blink_me");
     }
-    
+    // turn left (toll)
     if (currentValue <= 0) {
         var subst = "";
         for(var i = 0; i<tollWord.length; i++){
-            if (Math.abs(currentValue+1) > (i+1)*0.2 || !gameEnabled) {
+            if (Math.abs(currentValue+1) > (i+1)*0.2 ) {
                 subst += tollWord[i];
             } else {
                 subst += '<span style="color: green;">'+tollWord[i]+'</span>';
@@ -266,10 +287,11 @@ function gameLoop() {
         }
         element1.innerHTML = subst;
     } 
+    // turn right (free)
     if (currentValue >= 0) {
         var subst = "";
         for(var i = 0; i<freeWord.length; i++){
-            if (Math.abs(currentValue) > (i+1)*0.2 && currentValue != 0 && gameEnabled) {
+            if (Math.abs(currentValue) > (i+1)*0.2 && currentValue != 0 ) {
                 subst += '<span style="color: green;">'+freeWord[i]+'</span>';
             } else {
                 subst += freeWord[i];
@@ -279,20 +301,12 @@ function gameLoop() {
     }
     if (Math.abs(currentValue) > 0.8 && initialPosition) {
         initialPosition = false;
-        if (gameEnabled) {
-            if (currentValue > 0) {
-                makeChoice(element2);
-            }
-            else {
-                makeChoice(element1);
-            }
-
+        if (currentValue > 0) {
+            makeChoice(element2);
         }
-    }
-    
-    if (Math.abs(currentValue) < 0.8 && !initialPosition) {
-        element1.classList.remove("blink_me");
-        element2.classList.remove("blink_me");
+        else {
+            makeChoice(element1);
+        }
     }
   
     var start = requestAnimationFrame(gameLoop);
@@ -315,6 +329,8 @@ function onPageLoad() {
       });
 
       showStat(false);
+
+      // load all data from DB
       ajax_get('/cases', function(resp_data) {
         newPerson();
         setInterval(checkPersonLeave, 1000);
