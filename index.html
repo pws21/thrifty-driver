@@ -1,0 +1,70 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Thrifty driver</title>
+  <meta name="author" content="pws">
+
+  
+  <link rel="icon" href="static/img/favicon.ico">
+  <link rel="stylesheet" href="static/css/styles.css">
+
+</head>
+
+<body onload="onPageLoad()">
+    
+    <div class="container" id="main-container">
+        <div id="greet" class="position-absolute">What would you choose? <br/><span id="greet-stat"></span></div>
+        <div id="stat"></div>
+        <div class="sign-block">
+            <div class="sign-part sign-top">
+                <div><span class="arrow arrow-left"></span></div>
+                <div class="word" onclick="makeChoice(this)" id="toll">TOLL</div>
+                <div class="stat-grid" id="stat-toll" style="display: none;">
+                    <table>
+                        <tr>
+                            <td class="icon" id="toll-duration-icon"><img src="static/img/icon-timer.png"/></td>
+                            <td class="value"><div id="toll-duration"></div></td>
+                            <td class="icon" id="toll-distance-icon"><img src="static/img/icon-distance.png"/></td>
+                            <td class="value"><div id="toll-distance"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="icon" id="toll-fuel-icon"><img src="static/img/icon-fuel.png"/></td>
+                            <td class="value"><div id="toll-fuel"></div></td>
+                            <td class="icon" id="toll-fare-icon"><img src="static/img/icon-road.png"/></td>
+                            <td class="value"><div id="toll-fare"></div></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="sign-part sign-bottom">
+                <div class="stat-grid" id="stat-free" style="display: none;">
+                    <table>
+                        <tr>
+                            <td class="icon" id="free-duration-icon"><img src="static/img/icon-timer.png"/></td>
+                            <td class="value"><div id="free-duration"></div></td>
+                            <td class="icon"><img src="static/img/icon-distance.png"/></td>
+                            <td class="value"><div id="free-distance"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="icon" id="free-fuel-icon"><img src="static/img/icon-fuel.png"/></td>
+                            <td class="value"><div id="free-fuel"></div></td>
+                            <td class="icon" id="free-fare-icon"><img src="static/img/icon-road.png"/></td>
+                            <td class="value"><div id="free-fare"></div></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="word" onclick="makeChoice(this)" id="free">FREE</div>
+                <div><span class="arrow arrow-right"></span></div>
+            </div>
+        </div>
+    </div>
+ 
+
+    <script src="static/js/scripts.js"></script>
+    <script src="static/js/sweetalert2.all.min.js"></script>
+</body>
+</html>
