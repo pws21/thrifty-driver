@@ -19,7 +19,7 @@ var personCounter = 0;
 var cur_pos_num = 0;
 var leaveCounter = 0;
 
-var last_idx = 0;
+var last_idx = null;
 var initialPosition = true;
 var personId = null;
 var gameEnabled = true;
@@ -195,8 +195,9 @@ function nextItem() {
     // next random, but not previous
     do {
         next_idx = Math.floor(Math.random()*data.length);
+        console.log("next_rand "+ next_idx);
     }
-    while (last_idx == next_idx && data.length > 1);
+    while ((last_idx == next_idx && last_idx !== null ) && data.length > 1);
     last_idx = next_idx;
     
     showStat(false);
@@ -372,11 +373,11 @@ function onPageLoad() {
 
       // load all data from DB
       ajax_get('/cases', function(resp_data) {
-        newPerson();
         setInterval(checkPersonLeave, 1000);
         CASES_PER_PERSON = resp_data["cases_per_person"];
         MAX_IDLE_TIME = resp_data["max_idle_time"];
         data = resp_data["cases"];
+        newPerson();
       });
 
       
