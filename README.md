@@ -4,6 +4,8 @@ Exhibition stand for RnD 42
 
 Consists of gamepad wheel and monitor. Visitors should choose toll or free road they goes to.
 
+![Example](static/img/chrome-capture-drvz.gif)
+
 ## Prerequisites
 
 In data folder, which will be mounted to docker container should be file `cases.csv`.
