@@ -1,8 +1,9 @@
 const units = {
-    "fuel": "€",
+    "fuel": "L",
     "distance": "km",
     "duration": "min",
-    "fare": "€"
+    "fare": "€",
+    "emission":"kgCO₂"
 }
 
 var CASES_PER_PERSON = null;
@@ -52,8 +53,8 @@ function post_result(data) {
 }
 
 
-function price(amount) {
-    return amount.toFixed(2);
+function formatNum(amount, scale) {
+    return amount.toFixed(scale);
 }
 
 
@@ -64,16 +65,35 @@ function applyItemData(item, kind, otherKind) {
         //console.log(el);
         if (el !== null) {
             var val = item[kind][key];
-            if (key == "fare" || key =="fuel") {
-                val = price(val);
+            switch (key) {
+                case "fuel":
+                    val = formatNum(val,1) + units[key] + " + " + formatNum(2.1 * val, 0) + units["emission"] ;
+                    break;
+                case "fare":
+                    if (item[kind]["discount"] < item[kind][key]) {
+                        val = "<strike style=\"color: #a50b0b; padding-right: 0.1hv;\">" + formatNum(val,2) + "</strike> " + formatNum(item[kind]["discount"],2) + " " + units[key];
+                    } else {
+                        val = formatNum(val,2) + " " + units[key];
+                    }
+                    break;
+                default:
+                    val = val + " " + units[key];
+            }
+            el.innerHTML = val;
+/*
+            if (key =="fuel") {
+                val = formatNum(val,1) + " + " + formatNum(2.1 * val) + units["emission"] ;
+            }
+            if (key == "fare") {
+                val = formatNum(val,2);
             }
             if (key == "fare" && item[kind]["discount"] < item[kind][key]) {
-                el.innerHTML = "<strike style=\"color: #a50b0b; padding-right: 0.1hv;\">" + val + "</strike> " + price(item[kind]["discount"]) + " " + units[key];
+                el.innerHTML = "<strike style=\"color: #a50b0b; padding-right: 0.1hv;\">" + val + "</strike> " + formatNum(item[kind]["discount"],2) + " " + units[key];
             } else {
                 el.textContent = val + " " + units[key];
             }
 
-
+*/
             var valueStyle = "better";
             if (item[kind][key] > item[otherKind][key]) {
                 var valueStyle = "";
@@ -279,7 +299,7 @@ function gameLoop() {
     if (currentValue <= 0) {
         var subst = "";
         for(var i = 0; i<tollWord.length; i++){
-            if (Math.abs(currentValue+1) > (i+1)*0.2 ) {
+            if (Math.abs(currentValue+1) > (i+1)*0.2  || !gameEnabled) {
                 subst += tollWord[i];
             } else {
                 subst += '<span style="color: green;">'+tollWord[i]+'</span>';
@@ -291,7 +311,7 @@ function gameLoop() {
     if (currentValue >= 0) {
         var subst = "";
         for(var i = 0; i<freeWord.length; i++){
-            if (Math.abs(currentValue) > (i+1)*0.2 && currentValue != 0 ) {
+            if (Math.abs(currentValue) > (i+1)*0.2 && currentValue != 0 && gameEnabled) {
                 subst += '<span style="color: green;">'+freeWord[i]+'</span>';
             } else {
                 subst += freeWord[i];
