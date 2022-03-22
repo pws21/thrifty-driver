@@ -84,7 +84,7 @@ function applyItemData(item, kind, otherKind) {
             var val = item[kind][key];
             switch (key) {
                 case "fuel":
-                    val = formatNum(val,1) + units[key] + " + " + formatNum(2.1 * val, 0) + units["emission"] ;
+                    val = formatNum(val,1) + units[key] + " / " + formatNum(2.1 * val, 0) + units["emission"] ;
                     break;
                 case "fare":
                     if (item[kind]["discount"] < item[kind][key]) {
@@ -100,20 +100,8 @@ function applyItemData(item, kind, otherKind) {
                     val = val + " " + units[key];
             }
             el.innerHTML = val;
-/*
-            if (key =="fuel") {
-                val = formatNum(val,1) + " + " + formatNum(2.1 * val) + units["emission"] ;
-            }
-            if (key == "fare") {
-                val = formatNum(val,2);
-            }
-            if (key == "fare" && item[kind]["discount"] < item[kind][key]) {
-                el.innerHTML = "<strike style=\"color: #a50b0b; padding-right: 0.1hv;\">" + val + "</strike> " + formatNum(item[kind]["discount"],2) + " " + units[key];
-            } else {
-                el.textContent = val + " " + units[key];
-            }
 
-*/
+            // which is better?
             var valueStyle = "better";
             if (item[kind][key] > item[otherKind][key]) {
                 var valueStyle = "";
