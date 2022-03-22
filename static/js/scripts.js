@@ -53,6 +53,23 @@ function post_result(data) {
 }
 
 
+function formatMinutes(minutes) {
+    var m = minutes % 60;
+    var h = (minutes-m) / 60;
+
+    var ret = "";
+    if (h > 0) {
+        ret = ret + h.toString() + " h ";
+    }
+    if (m > 0) {
+        ret = ret + (m < 10 ? "0" : "") + m.toString() + " m";
+    }
+    
+    return ret;
+}
+
+
+
 function formatNum(amount, scale) {
     return amount.toFixed(scale);
 }
@@ -75,6 +92,9 @@ function applyItemData(item, kind, otherKind) {
                     } else {
                         val = formatNum(val,2) + " " + units[key];
                     }
+                    break;
+                case "duration":
+                    val = formatMinutes(val);
                     break;
                 default:
                     val = val + " " + units[key];
