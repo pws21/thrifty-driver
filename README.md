@@ -2,13 +2,13 @@
 
 Exhibition stand for RnD 42
 
-Consists of gamepad wheel and monitor. Visitors should choose toll or free road they goes to.
+Consists of gamepad wheel and monitor. Visitors should choose toll or free road they go to.
 
 ![Example](static/img/chrome-capture-drvz.gif)
 
 ## Prerequisites
 
-In data folder, which will be mounted to docker container should be file `cases.csv`.
+In data folder, which will be mounted to docker container, should be file `cases.csv`.
 File `driver.db` with SQLite db will be created in the same folder on application startup, if it does not exist yet.
 If file already exists then application proceed writing data into it.
 
